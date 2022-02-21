@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/CJM1994/tinyapp/issues"
   },
-  "homepage": "https://github.com/CJM1994/tinyapp#readme"
+  "homepage": "https://github.com/CJM1994/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
 }
