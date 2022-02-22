@@ -16,8 +16,8 @@ app.get('/urls_new', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  console.log(urlDatabase);
-  res.send('POSTED THIS');
+  urlDatabase[generateShortURL()] = req.body.longURL;
+  res.redirect('/urls');
 });
 
 app.get('/urls', (req, res) => {
