@@ -30,18 +30,6 @@ app.get('/urls/:shorturl', (req, res) => {
   res.render('urls_view.ejs', templateVars);
 });
 
-app.get('/', (req, res) => {
-  res.end('Hello');
-});
-
-app.get('/hello', (req, res) => {
-  res.send('<html><head><title>Example</title></head><body>Hello <b>World</b></body></html>');
-});
-
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
-
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
