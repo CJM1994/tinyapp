@@ -16,6 +16,7 @@ app.get('/urls_new', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
+
   console.log(req.body);
   res.send('POSTED THIS');
 });
@@ -46,14 +47,14 @@ app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
 
-const generateRandomString = function () {
+const generateURLPair = function (longURL) {
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const stringLength = 6;
-  let returnString = '';
+  let shortURL = '';
   let $n = 0;
   for (let i = 0; i < stringLength; i++) {
     $n = Math.floor(Math.random() * charset.length);
-    returnString += charset[$n];
+    shortURL += charset[$n];
   }
-  return returnString;
+  return { [shortURL]: longURL };
 };
