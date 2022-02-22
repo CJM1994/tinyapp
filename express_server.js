@@ -11,6 +11,10 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+app.get('/', (req, res) => {
+  res.redirect('/urls');
+});
+
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
@@ -33,7 +37,12 @@ app.get('/urls/:shorturl', (req, res) => {
 app.post('/urls/:shorturl/delete', (req, res) => {
   delete urlDatabase[req.params.shorturl];
   res.redirect('/urls');
-})
+});
+
+app.post('/urls/:shorturl/update', (req, res) => {
+  urlDatabase[req.params.shorturl] = req.body.longURL;
+  res.redirect('/urls');
+});
 
 app.get('/u/:shorturl', (req, res) => {
   res.redirect(urlDatabase[req.params.shorturl]);
