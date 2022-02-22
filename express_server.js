@@ -11,7 +11,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-app.get('/urls_new', (req, res) => {
+app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
 
@@ -31,8 +31,12 @@ app.get('/urls/:shorturl', (req, res) => {
 });
 
 app.get('/u/:shorturl', (req, res) => {
+  console.log(urlDatabase[req.params.shorturl]);
   res.redirect(urlDatabase[req.params.shorturl]);
 });
+
+// app.post('/u/:shorturl/delete')
+// will make this url delete this from db
 
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
