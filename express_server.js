@@ -30,13 +30,14 @@ app.get('/urls/:shorturl', (req, res) => {
   res.render('urls_view.ejs', templateVars);
 });
 
+app.post('/urls/:shorturl/delete', (req, res) => {
+  delete urlDatabase[req.params.shorturl];
+  res.redirect('/urls');
+})
+
 app.get('/u/:shorturl', (req, res) => {
-  console.log(urlDatabase[req.params.shorturl]);
   res.redirect(urlDatabase[req.params.shorturl]);
 });
-
-// app.post('/u/:shorturl/delete')
-// will make this url delete this from db
 
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
