@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/hello', (req, res) => {
-  res.send('<html><head><title>Example</title></head><body>Hello <b>World</b></body></html>')
+  res.send('<html><head><title>Example</title></head><body>Hello <b>World</b></body></html>');
 });
 
 app.get('/urls.json', (req, res) => {
@@ -45,3 +45,16 @@ app.get('/urls.json', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
+
+const generateRandomString = function() {
+  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const stringLength = 6;
+  let returnString = '';
+  let $n = 0;
+  for (let i = 0; i < stringLength; i++) {
+    $n = Math.floor(Math.random() * charset.length);
+    console.log($n);
+    returnString += charset[$n];
+  }
+  return returnString;
+};
