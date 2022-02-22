@@ -1,8 +1,10 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -11,6 +13,11 @@ const urlDatabase = {
 
 app.get('/urls_new', (req, res) => {
   res.render('urls_new');
+});
+
+app.post('/urls', (req, res) => {
+  console.log(req.body);
+  res.send('POSTED THIS');
 });
 
 app.get('/urls', (req, res) => {
