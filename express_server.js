@@ -30,6 +30,10 @@ app.get('/urls/:shorturl', (req, res) => {
   res.render('urls_view.ejs', templateVars);
 });
 
+app.get('/u/:shorturl', (req, res) => {
+  res.redirect(urlDatabase[req.params.shorturl]);
+});
+
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
