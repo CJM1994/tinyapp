@@ -16,8 +16,7 @@ app.get('/urls_new', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-
-  console.log(req.body);
+  console.log(urlDatabase);
   res.send('POSTED THIS');
 });
 
@@ -47,7 +46,7 @@ app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
 
-const generateURLPair = function (longURL) {
+const generateShortURL = function () {
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const stringLength = 6;
   let shortURL = '';
@@ -56,5 +55,5 @@ const generateURLPair = function (longURL) {
     $n = Math.floor(Math.random() * charset.length);
     shortURL += charset[$n];
   }
-  return { [shortURL]: longURL };
+  return shortURL;
 };
