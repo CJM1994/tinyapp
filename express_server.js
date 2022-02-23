@@ -17,6 +17,16 @@ app.get('/', (req, res) => {
   res.redirect('/urls');
 });
 
+// GET Request for register page - ongoing
+app.get('/register', (req, res) => {
+
+  res.render('register');
+});
+
+app.post('/register', (req, res) => {
+  res.redirect('/register');
+});
+
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
@@ -28,7 +38,7 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  templateVars = { username: req.cookies['username'] };
+  const templateVars = { username: req.cookies['username'] };
   res.render('urls_new', templateVars);
 });
 
