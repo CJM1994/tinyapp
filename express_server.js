@@ -13,6 +13,14 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  // 'userID': {
+  //   id: 'userID',
+  //   email: 'user@email.com',
+  //   password: 'pass123'
+  // }
+};
+
 app.get('/', (req, res) => {
   res.redirect('/urls');
 });
@@ -24,7 +32,18 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  res.redirect('/register');
+  const { email, password } = req.body;
+  const userID = generateRandomString();
+
+  users[userID] = {
+    id: userID,
+    email: email,
+    password: password
+  };
+
+  res.cookie('user_ID', userID);
+
+  res.redirect('/urls');
 });
 
 app.post('/login', (req, res) => {
@@ -38,22 +57,24 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const templateVars = { username: req.cookies['username'] };
+  const templateVars = { user: users[req.cookies['user_ID']] };
+  console.log(users);
+  console.log(templateVars);
   res.render('urls_new', templateVars);
 });
 
 app.post('/urls', (req, res) => {
-  urlDatabase[generateShortURL()] = req.body.longURL;
+  urlDatabase[generateRandomString()] = req.body.longURL;
   res.redirect('/urls');
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies['username'] };
+  const templateVars = { urls: urlDatabase, user: users[req.cookies['user_ID']] };
   res.render('urls_index.ejs', templateVars);
 });
 
 app.get('/urls/:shorturl', (req, res) => {
-  const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl], username: req.cookies['username'] };
+  const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl], user: users[req.cookies['user_ID']] };
   res.render('urls_view.ejs', templateVars);
 });
 
@@ -75,7 +96,7 @@ app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
 
-const generateShortURL = function () {
+const generateRandomString = function () {
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const stringLength = 6;
   let shortURL = '';
