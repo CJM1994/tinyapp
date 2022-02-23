@@ -24,10 +24,9 @@
         <!-- Add button to update URL for short link -->
         <form method="POST" action="/urls/<%=shortURL%>/edit">
           <div>
-            <label for="longURL">Update to New URL:</label>
             <input class="form-control" type="text" name="longURL" placeholder="http://" id="longURL"
               style="width: 300px; display:block; margin:0 auto">
-            <button type="submit">Submit</button>
+            <button class="btn btn-dark" type="submit">Update URL</button>
           </div>
         </form>
       </div>
