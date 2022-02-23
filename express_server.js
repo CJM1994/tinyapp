@@ -39,7 +39,7 @@ app.post('/urls/:shorturl/delete', (req, res) => {
   res.redirect('/urls');
 });
 
-app.post('/urls/:shorturl/update', (req, res) => {
+app.post('/urls/:shorturl/edit', (req, res) => {
   urlDatabase[req.params.shorturl] = req.body.longURL;
   res.redirect('/urls');
 });
