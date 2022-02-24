@@ -5,6 +5,9 @@ const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
 
+// HELPERS
+const lookupIDByEmail = require('./helpers');
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({
@@ -41,22 +44,13 @@ app.get('/register', (req, res) => {
   } else res.render('register');
 });
 
-const lookupIDByEmail = function (email) {
-  for (const id in users) {
-    if (users[id].email === email) {
-      return id;
-    }
-  }
-  return false;
-};
-
 app.post('/register', (req, res) => {
 
   if (req.body.email === '' || req.body.password === '') {
     res.status(400);
     res.send('email or password form is blank');
   }
-  if (lookupIDByEmail(req.body.email)) {
+  if (lookupIDByEmail(req.body.email, users)) {
     res.status(400);
     res.send('email is in use');
   } else {
@@ -83,7 +77,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
 
-  const userID = lookupIDByEmail(req.body.email);
+  const userID = lookupIDByEmail(req.body.email, users);
 
   if (!userID) {
     res.status(403);
