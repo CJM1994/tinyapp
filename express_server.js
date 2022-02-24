@@ -26,6 +26,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+  if (req.cookies['user_ID']) {
+    res.redirect('/urls');
+  };
   res.render('register');
 });
 
@@ -33,8 +36,8 @@ const lookupIDByEmail = function (email) {
   for (const id in users) {
     if (users[id].email === email) {
       return id;
-    }
-  }
+    };
+  };
   return false;
 };
 
@@ -65,6 +68,9 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  if (req.cookies['user_ID']) {
+    res.redirect('/urls');
+  };
   res.render('login');
 });
 
