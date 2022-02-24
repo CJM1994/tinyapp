@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const req = require('express/lib/request');
 const app = express();
 const PORT = 8080;
 
@@ -11,11 +12,11 @@ app.use(cookieParser());
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
-    userID: "aJ48lW"
+    userID: "userID"
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
-    userID: "aJ48lW"
+    userID: "userID"
   }
 };
 
@@ -34,8 +35,8 @@ app.get('/', (req, res) => {
 app.get('/register', (req, res) => {
   if (req.cookies['user_ID']) {
     res.redirect('/urls');
-  };
-  res.render('register');
+  }
+  else res.render('register');
 });
 
 const lookupIDByEmail = function (email) {
@@ -76,8 +77,8 @@ app.post('/register', (req, res) => {
 app.get('/login', (req, res) => {
   if (req.cookies['user_ID']) {
     res.redirect('/urls');
-  };
-  res.render('login');
+  }
+  else res.render('login');
 });
 
 app.post('/login', (req, res) => {
@@ -124,8 +125,19 @@ app.post('/urls', (req, res) => {
   res.redirect('/urls');
 });
 
+const filterURLs = function (urlDatabase, req) {
+  const urlDatabaseFiltered = {};
+  for (url in urlDatabase) {
+    if (urlDatabase[url].userID === req.cookies['user_ID']) {
+      urlDatabaseFiltered[url] = urlDatabase[url];
+    };
+  };
+  return urlDatabaseFiltered;
+};
+
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase, user: users[req.cookies['user_ID']] };
+  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
+  const templateVars = { urls: urlDatabaseFiltered, user: users[req.cookies['user_ID']] };
   res.render('urls_index.ejs', templateVars);
 });
 
