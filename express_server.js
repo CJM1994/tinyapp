@@ -140,7 +140,6 @@ app.get('/urls', (req, res) => {
   res.render('urls_index.ejs', templateVars);
 });
 
-// ADJUST
 app.get('/urls/:shorturl', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.cookies['user_ID']] };
@@ -151,12 +150,18 @@ app.get('/urls/:shorturl', (req, res) => {
 });
 
 app.post('/urls/:shorturl/delete', (req, res) => {
-  delete urlDatabase[req.params.shorturl];
+  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
+  if (urlDatabaseFiltered[req.params.shorturl]) {
+    delete urlDatabase[req.params.shorturl];
+  };
   res.redirect('/urls');
 });
 
 app.post('/urls/:shorturl/edit', (req, res) => {
-  urlDatabase[req.params.shorturl].longURL = req.body.longURL;
+  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
+  if (urlDatabaseFiltered[req.params.shorturl]) {
+    urlDatabase[req.params.shorturl].longURL = req.body.longURL;
+  };
   res.redirect('/urls');
 });
 
