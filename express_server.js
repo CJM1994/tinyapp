@@ -29,10 +29,10 @@ app.get('/register', (req, res) => {
   res.render('register');
 });
 
-const emailInUse = function (email) {
+const lookupIDByEmail = function (email) {
   for (const id in users) {
     if (users[id].email === email) {
-      return true;
+      return id;
     }
   }
   return false;
@@ -44,7 +44,7 @@ app.post('/register', (req, res) => {
     res.status(400);
     res.send('email or password form is blank');
   }
-  if (emailInUse(req.body.email)) {
+  if (lookupIDByEmail(req.body.email)) {
     res.status(400);
     res.send('email is in use');
   }
@@ -69,7 +69,22 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  // UPDATE NEEDED
+
+  const userID = lookupIDByEmail(req.body.email);
+
+  if (!userID) {
+    res.status(403);
+    res.send('Username or email is invalid');
+    console.log('Email Invalid');
+  };
+
+  if (users[userID].password !== req.body.password) {
+    res.status(403);
+    res.send('Username or email is invalid');
+    console.log('Password Invalid');
+  };
+
+  res.cookie('user_ID', userID);
   res.redirect('/urls');
 });
 
