@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
 
@@ -23,7 +24,7 @@ const users = {
   'userID': {
     id: 'userID',
     email: 'user@email.com',
-    password: 'pass123'
+    password: '$2a$10$IIRVCgO5NS6s3mVXd0E1Ju6j4H.PK7bNFWiEBn1/zmaOB.L2aTHlS'
   }
 };
 
@@ -64,7 +65,7 @@ app.post('/register', (req, res) => {
     users[userID] = {
       id: userID,
       email: email,
-      password: password
+      password: bcrypt.hashSync(password, 10)
     };
 
     res.cookie('user_ID', userID);
@@ -90,7 +91,7 @@ app.post('/login', (req, res) => {
     console.log('Email Invalid');
   };
 
-  if (users[userID].password !== req.body.password) {
+  if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
     res.status(403);
     res.send('Username or email is invalid');
     console.log('Password Invalid');
