@@ -18,40 +18,44 @@
   <%- include('partials/_header') %>
 
     <main style="margin: 1em;">
-      <h3>My URLs</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Short URL</th>
-            <th scope="col">Long URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for(let url in urls) { %>
-            <tr>
-              <td>
-                <%= url %>
-              </td>
-              <td>
-                <%= urls[url].longURL %>
-              </td>
-              <td>
-                Owner ID: <%= urls[url].userID %>
-              </td>
-              <td>
-                <form method="GET" action="/urls/<%=url%>">
-                  <button type="submit" class="btn btn-warning">Edit</button>
-                </form>
-              </td>
-              <td>
-                <form method="POST" action="/urls/<%=url%>/delete">
-                  <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-              </td>
-            </tr>
-            <% } %>
-        </tbody>
-      </table>
+      <% if(user) { %>
+        <h3>My URLs</h3>
+        <% } else { %>
+          <h3>Log-In or create an account to see your URLs here</h3>
+          <% } %>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Short URL</th>
+                  <th scope="col">Long URL</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(let url in urls) { %>
+                  <tr>
+                    <td>
+                      <%= url %>
+                    </td>
+                    <td>
+                      <%= urls[url].longURL %>
+                    </td>
+                    <td>
+                      Owner ID: <%= urls[url].userID %>
+                    </td>
+                    <td>
+                      <form method="GET" action="/urls/<%=url%>">
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                      </form>
+                    </td>
+                    <td>
+                      <form method="POST" action="/urls/<%=url%>/delete">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% } %>
+              </tbody>
+            </table>
     </main>
 
     <!-- Bootstrap JS -->
