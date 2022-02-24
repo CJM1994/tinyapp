@@ -36,6 +36,9 @@
                 <%= urls[url].longURL %>
               </td>
               <td>
+                Owner ID: <%= urls[url].userID %>
+              </td>
+              <td>
                 <form method="GET" action="/urls/<%=url%>">
                   <button type="submit" class="btn btn-warning">Edit</button>
                 </form>
