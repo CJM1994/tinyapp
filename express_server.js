@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'cookies',
   keys: ['secret'],
-}))
+}));
 
 const urlDatabase = {
   b6UTxQ: {
@@ -38,16 +38,15 @@ app.get('/', (req, res) => {
 app.get('/register', (req, res) => {
   if (req.session.user_ID) {
     res.redirect('/urls');
-  }
-  else res.render('register');
+  } else res.render('register');
 });
 
 const lookupIDByEmail = function (email) {
   for (const id in users) {
     if (users[id].email === email) {
       return id;
-    };
-  };
+    }
+  }
   return false;
 };
 
@@ -60,8 +59,7 @@ app.post('/register', (req, res) => {
   if (lookupIDByEmail(req.body.email)) {
     res.status(400);
     res.send('email is in use');
-  }
-  else {
+  } else {
     const { email, password } = req.body;
     const userID = generateRandomString();
 
@@ -80,8 +78,7 @@ app.post('/register', (req, res) => {
 app.get('/login', (req, res) => {
   if (req.session.user_ID) {
     res.redirect('/urls');
-  }
-  else res.render('login');
+  } else res.render('login');
 });
 
 app.post('/login', (req, res) => {
@@ -92,13 +89,13 @@ app.post('/login', (req, res) => {
     res.status(403);
     res.send('Username or email is invalid');
     console.log('Email Invalid');
-  };
+  }
 
   if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
     res.status(403);
     res.send('Username or email is invalid');
     console.log('Password Invalid');
-  };
+  }
 
   req.session.user_ID = userID;
   res.redirect('/urls');
@@ -112,7 +109,7 @@ app.post('/logout', (req, res) => {
 app.get('/urls/new', (req, res) => {
   if (!req.session.user_ID) {
     res.redirect('/urls');
-  };
+  }
   const templateVars = { user: users[req.session.user_ID] };
   res.render('urls_new', templateVars);
 });
@@ -124,17 +121,17 @@ app.post('/urls', (req, res) => {
       longURL: req.body.longURL,
       userID: req.session.user_ID
     };
-  };
+  }
   res.redirect('/urls');
 });
 
 const filterURLs = function (urlDatabase, req) {
   const urlDatabaseFiltered = {};
-  for (url in urlDatabase) {
+  for (const url in urlDatabase) {
     if (urlDatabase[url].userID === req.session.user_ID) {
       urlDatabaseFiltered[url] = urlDatabase[url];
-    };
-  };
+    }
+  }
   return urlDatabaseFiltered;
 };
 
@@ -149,15 +146,14 @@ app.get('/urls/:shorturl', (req, res) => {
   const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.session.user_ID] };
   if (urlDatabaseFiltered[req.params.shorturl]) {
     res.render('urls_view.ejs', templateVars);
-  }
-  else res.render('urls_view_logout', templateVars);
+  } else res.render('urls_view_logout', templateVars);
 });
 
 app.post('/urls/:shorturl/delete', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   if (urlDatabaseFiltered[req.params.shorturl]) {
     delete urlDatabase[req.params.shorturl];
-  };
+  }
   res.redirect('/urls');
 });
 
@@ -165,7 +161,7 @@ app.post('/urls/:shorturl/edit', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   if (urlDatabaseFiltered[req.params.shorturl]) {
     urlDatabase[req.params.shorturl].longURL = req.body.longURL;
-  };
+  }
   res.redirect('/urls');
 });
 
