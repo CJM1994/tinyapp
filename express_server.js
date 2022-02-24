@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const req = require('express/lib/request');
 const app = express();
 const PORT = 8080;
 
@@ -141,9 +140,14 @@ app.get('/urls', (req, res) => {
   res.render('urls_index.ejs', templateVars);
 });
 
+// ADJUST
 app.get('/urls/:shorturl', (req, res) => {
+  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.cookies['user_ID']] };
-  res.render('urls_view.ejs', templateVars);
+  if (urlDatabaseFiltered[req.params.shorturl]) {
+    res.render('urls_view.ejs', templateVars);
+  }
+  else res.render('urls_view_logout', templateVars);
 });
 
 app.post('/urls/:shorturl/delete', (req, res) => {
