@@ -14,36 +14,56 @@ const urlDatabase = {
 };
 
 const users = {
-  // 'userID': {
-  //   id: 'userID',
-  //   email: 'user@email.com',
-  //   password: 'pass123'
-  // }
+  'userID': {
+    id: 'userID',
+    email: 'user@email.com',
+    password: 'pass123'
+  }
 };
 
 app.get('/', (req, res) => {
   res.redirect('/urls');
 });
 
-// GET Request for register page - ongoing
 app.get('/register', (req, res) => {
-
   res.render('register');
 });
 
+const emailInUse = function (email) {
+  for (const id in users) {
+    console.log('all users ', users)
+    console.log('submitted', email, 'checked against', users[id].email);
+    if (users[id].email === email) {
+      return true;
+    }
+  }
+  return false;
+};
+
 app.post('/register', (req, res) => {
-  const { email, password } = req.body;
-  const userID = generateRandomString();
 
-  users[userID] = {
-    id: userID,
-    email: email,
-    password: password
-  };
+  if (req.body.email === '' || req.body.password === '') {
+    res.status(400);
+    res.send('email or password form is blank');
+  }
+  if (emailInUse(req.body.email)) {
+    res.status(400);
+    res.send('email is in use');
+  }
+  else {
+    const { email, password } = req.body;
+    const userID = generateRandomString();
 
-  res.cookie('user_ID', userID);
+    users[userID] = {
+      id: userID,
+      email: email,
+      password: password
+    };
 
-  res.redirect('/urls');
+    res.cookie('user_ID', userID);
+
+    res.redirect('/urls');
+  }
 });
 
 app.post('/login', (req, res) => {
