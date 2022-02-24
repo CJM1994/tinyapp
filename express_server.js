@@ -1,13 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'cookies',
+  keys: ['secret'],
+}))
 
 const urlDatabase = {
   b6UTxQ: {
@@ -33,7 +36,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  if (req.cookies['user_ID']) {
+  if (req.session.user_ID) {
     res.redirect('/urls');
   }
   else res.render('register');
@@ -68,14 +71,14 @@ app.post('/register', (req, res) => {
       password: bcrypt.hashSync(password, 10)
     };
 
-    res.cookie('user_ID', userID);
+    req.session.user_ID = userID;
 
     res.redirect('/urls');
   }
 });
 
 app.get('/login', (req, res) => {
-  if (req.cookies['user_ID']) {
+  if (req.session.user_ID) {
     res.redirect('/urls');
   }
   else res.render('login');
@@ -97,29 +100,29 @@ app.post('/login', (req, res) => {
     console.log('Password Invalid');
   };
 
-  res.cookie('user_ID', userID);
+  req.session.user_ID = userID;
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_ID');
+  req.session = null;
   res.redirect('/urls');
 });
 
 app.get('/urls/new', (req, res) => {
-  if (!req.cookies['user_ID']) {
+  if (!req.session.user_ID) {
     res.redirect('/urls');
   };
-  const templateVars = { user: users[req.cookies['user_ID']] };
+  const templateVars = { user: users[req.session.user_ID] };
   res.render('urls_new', templateVars);
 });
 
 app.post('/urls', (req, res) => {
-  if (req.cookies['user_ID']) {
+  if (req.session.user_ID) {
     const urlID = generateRandomString();
     urlDatabase[urlID] = {
       longURL: req.body.longURL,
-      userID: req.cookies['user_ID']
+      userID: req.session.user_ID
     };
   };
   res.redirect('/urls');
@@ -128,7 +131,7 @@ app.post('/urls', (req, res) => {
 const filterURLs = function (urlDatabase, req) {
   const urlDatabaseFiltered = {};
   for (url in urlDatabase) {
-    if (urlDatabase[url].userID === req.cookies['user_ID']) {
+    if (urlDatabase[url].userID === req.session.user_ID) {
       urlDatabaseFiltered[url] = urlDatabase[url];
     };
   };
@@ -137,13 +140,13 @@ const filterURLs = function (urlDatabase, req) {
 
 app.get('/urls', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
-  const templateVars = { urls: urlDatabaseFiltered, user: users[req.cookies['user_ID']] };
+  const templateVars = { urls: urlDatabaseFiltered, user: users[req.session.user_ID] };
   res.render('urls_index.ejs', templateVars);
 });
 
 app.get('/urls/:shorturl', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
-  const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.cookies['user_ID']] };
+  const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.session.user_ID] };
   if (urlDatabaseFiltered[req.params.shorturl]) {
     res.render('urls_view.ejs', templateVars);
   }
