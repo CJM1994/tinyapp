@@ -9,8 +9,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW"
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW"
+  }
 };
 
 const users = {
@@ -109,7 +115,11 @@ app.get('/urls/new', (req, res) => {
 
 app.post('/urls', (req, res) => {
   if (req.cookies['user_ID']) {
-    urlDatabase[generateRandomString()] = req.body.longURL;
+    const urlID = generateRandomString();
+    urlDatabase[urlID] = {
+      longURL: req.body.longURL,
+      userID: req.cookies['user_ID']
+    };
   };
   res.redirect('/urls');
 });
@@ -120,7 +130,7 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/:shorturl', (req, res) => {
-  const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl], user: users[req.cookies['user_ID']] };
+  const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.cookies['user_ID']] };
   res.render('urls_view.ejs', templateVars);
 });
 
@@ -130,12 +140,12 @@ app.post('/urls/:shorturl/delete', (req, res) => {
 });
 
 app.post('/urls/:shorturl/edit', (req, res) => {
-  urlDatabase[req.params.shorturl] = req.body.longURL;
+  urlDatabase[req.params.shorturl].longURL = req.body.longURL;
   res.redirect('/urls');
 });
 
 app.get('/u/:shorturl', (req, res) => {
-  res.redirect(urlDatabase[req.params.shorturl]);
+  res.redirect(urlDatabase[req.params.shorturl].longURL);
 });
 
 app.listen(PORT, () => {
