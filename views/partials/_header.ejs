@@ -11,10 +11,8 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
 
         <% if( user===undefined ) { %>
-          <form class="form-inline" method="POST" action="/login">
-            <input class="form-control" type="text" name="username" placeholder="username">
-            <button class="btn btn-light" type="submit">Log-In</button>
-          </form>
+          <a href="/login" class="nav-item nav-link">Log In Here</a>
+          <a href="/register" class="nav-item nav-link">Register Here</a>
           <% } else { %>
             <form method="POST" action="/logout">
               <h5>Logged in as: <%-user['email']%>

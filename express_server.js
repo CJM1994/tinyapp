@@ -31,8 +31,6 @@ app.get('/register', (req, res) => {
 
 const emailInUse = function (email) {
   for (const id in users) {
-    console.log('all users ', users)
-    console.log('submitted', email, 'checked against', users[id].email);
     if (users[id].email === email) {
       return true;
     }
@@ -66,8 +64,12 @@ app.post('/register', (req, res) => {
   }
 });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
+  // UPDATE NEEDED
   res.redirect('/urls');
 });
 
