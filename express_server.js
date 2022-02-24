@@ -100,14 +100,17 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
+  if (!req.cookies['user_ID']) {
+    res.redirect('/urls');
+  };
   const templateVars = { user: users[req.cookies['user_ID']] };
-  console.log(users);
-  console.log(templateVars);
   res.render('urls_new', templateVars);
 });
 
 app.post('/urls', (req, res) => {
-  urlDatabase[generateRandomString()] = req.body.longURL;
+  if (req.cookies['user_ID']) {
+    urlDatabase[generateRandomString()] = req.body.longURL;
+  };
   res.redirect('/urls');
 });
 
