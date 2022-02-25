@@ -19,4 +19,14 @@ const generateRandomString = function () {
   return shortURL;
 };
 
-module.exports = { lookupIDByEmail, generateRandomString };
+const filterURLs = function (urlDatabase, req) {
+  const urlDatabaseFiltered = {};
+  for (const url in urlDatabase) {
+    if (urlDatabase[url].userID === req.session.user_ID) {
+      urlDatabaseFiltered[url] = urlDatabase[url];
+    }
+  }
+  return urlDatabaseFiltered;
+};
+
+module.exports = { lookupIDByEmail, generateRandomString, filterURLs };

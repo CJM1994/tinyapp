@@ -7,7 +7,7 @@ const app = express();
 const PORT = 8080;
 
 // HELPERS
-const { lookupIDByEmail, generateRandomString } = require('./helpers');
+const { lookupIDByEmail, generateRandomString, filterURLs } = require('./helpers');
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -82,7 +82,6 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
 
   const userID = lookupIDByEmail(req.body.email, users);
-  console.log(userID);
 
   if (!userID) {
     res.status(403).res.send('Username or email is invalid');
@@ -119,16 +118,6 @@ app.post('/urls', (req, res) => {
     res.redirect(`/urls/${urlID}`)
   } else { res.status(403).send('You must be logged in to create urls') };
 });
-
-const filterURLs = function (urlDatabase, req) {
-  const urlDatabaseFiltered = {};
-  for (const url in urlDatabase) {
-    if (urlDatabase[url].userID === req.session.user_ID) {
-      urlDatabaseFiltered[url] = urlDatabase[url];
-    }
-  }
-  return urlDatabaseFiltered;
-};
 
 app.get('/urls', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
@@ -175,4 +164,3 @@ app.get('/u/:shorturl', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
-
