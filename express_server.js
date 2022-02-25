@@ -35,7 +35,9 @@ const users = {
 };
 
 app.get('/', (req, res) => {
-  res.redirect('/urls');
+  if (req.session.user_ID) {
+    res.redirect('/urls');
+  } else res.redirect('login');
 });
 
 app.get('/register', (req, res) => {
@@ -102,7 +104,7 @@ app.post('/logout', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   if (!req.session.user_ID) {
-    res.redirect('/urls');
+    res.redirect('/login');
   }
   const templateVars = { user: users[req.session.user_ID] };
   res.render('urls_new', templateVars);
@@ -115,8 +117,8 @@ app.post('/urls', (req, res) => {
       longURL: req.body.longURL,
       userID: req.session.user_ID
     };
-  }
-  res.redirect('/urls');
+    res.redirect(`/urls/${urlID}`)
+  } else { res.status(403).send('You must be logged in to create urls') };
 });
 
 const filterURLs = function (urlDatabase, req) {
@@ -136,11 +138,16 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/:shorturl', (req, res) => {
-  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
-  const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.session.user_ID] };
-  if (urlDatabaseFiltered[req.params.shorturl]) {
-    res.render('urls_view.ejs', templateVars);
-  } else res.render('urls_view_logout', templateVars);
+
+  if (urlDatabase[req.params.shorturl]) {
+    const urlDatabaseFiltered = filterURLs(urlDatabase, req);
+    const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.session.user_ID] };
+    if (urlDatabaseFiltered[req.params.shorturl]) {
+      res.render('urls_view.ejs', templateVars);
+    } else res.render('urls_view_logout', templateVars);
+  }
+  else { res.status(404).send('Page not found') }
+
 });
 
 app.post('/urls/:shorturl/delete', (req, res) => {
@@ -160,7 +167,10 @@ app.post('/urls/:shorturl/edit', (req, res) => {
 });
 
 app.get('/u/:shorturl', (req, res) => {
-  res.redirect(urlDatabase[req.params.shorturl].longURL);
+  if (urlDatabase[req.params.shorturl]) {
+    res.redirect(urlDatabase[req.params.shorturl].longURL);
+  }
+  else { res.status(404).send('Page not found') };
 });
 
 app.listen(PORT, () => {
