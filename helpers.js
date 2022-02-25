@@ -7,4 +7,26 @@ const lookupIDByEmail = function (email, userDB) {
   return false;
 };
 
-module.exports = lookupIDByEmail;
+const generateRandomString = function () {
+  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const stringLength = 6;
+  let shortURL = '';
+  let $n = 0;
+  for (let i = 0; i < stringLength; i++) {
+    $n = Math.floor(Math.random() * charset.length);
+    shortURL += charset[$n];
+  }
+  return shortURL;
+};
+
+const filterURLs = function (urlDatabase, req) {
+  const urlDatabaseFiltered = {};
+  for (const url in urlDatabase) {
+    if (urlDatabase[url].userID === req.session.user_ID) {
+      urlDatabaseFiltered[url] = urlDatabase[url];
+    }
+  }
+  return urlDatabaseFiltered;
+};
+
+module.exports = { lookupIDByEmail, generateRandomString, filterURLs };

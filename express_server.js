@@ -7,7 +7,7 @@ const app = express();
 const PORT = 8080;
 
 // HELPERS
-const lookupIDByEmail = require('./helpers');
+const { lookupIDByEmail, generateRandomString, filterURLs } = require('./helpers');
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -84,15 +84,11 @@ app.post('/login', (req, res) => {
   const userID = lookupIDByEmail(req.body.email, users);
 
   if (!userID) {
-    res.status(403);
-    res.send('Username or email is invalid');
-    console.log('Email Invalid');
+    res.status(403).res.send('Username or email is invalid');
   }
 
   if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
-    res.status(403);
-    res.send('Username or email is invalid');
-    console.log('Password Invalid');
+    res.status(403).res.send('Username or email is invalid');
   }
 
   req.session.user_ID = userID;
@@ -122,16 +118,6 @@ app.post('/urls', (req, res) => {
     res.redirect(`/urls/${urlID}`)
   } else { res.status(403).send('You must be logged in to create urls') };
 });
-
-const filterURLs = function (urlDatabase, req) {
-  const urlDatabaseFiltered = {};
-  for (const url in urlDatabase) {
-    if (urlDatabase[url].userID === req.session.user_ID) {
-      urlDatabaseFiltered[url] = urlDatabase[url];
-    }
-  }
-  return urlDatabaseFiltered;
-};
 
 app.get('/urls', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
@@ -178,15 +164,3 @@ app.get('/u/:shorturl', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });
-
-const generateRandomString = function () {
-  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const stringLength = 6;
-  let shortURL = '';
-  let $n = 0;
-  for (let i = 0; i < stringLength; i++) {
-    $n = Math.floor(Math.random() * charset.length);
-    shortURL += charset[$n];
-  }
-  return shortURL;
-};
