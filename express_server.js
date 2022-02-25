@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+const methodOverride = require('method-override');
 const app = express();
 const PORT = 8080;
 
@@ -10,6 +11,7 @@ const lookupIDByEmail = require('./helpers');
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 app.use(cookieSession({
   name: 'cookies',
   keys: ['secret'],
@@ -150,7 +152,7 @@ app.get('/urls/:shorturl', (req, res) => {
 
 });
 
-app.post('/urls/:shorturl/delete', (req, res) => {
+app.delete('/urls/:shorturl/delete', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   if (urlDatabaseFiltered[req.params.shorturl]) {
     delete urlDatabase[req.params.shorturl];
@@ -158,7 +160,7 @@ app.post('/urls/:shorturl/delete', (req, res) => {
   res.redirect('/urls');
 });
 
-app.post('/urls/:shorturl/edit', (req, res) => {
+app.put('/urls/:shorturl/edit', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   if (urlDatabaseFiltered[req.params.shorturl]) {
     urlDatabase[req.params.shorturl].longURL = req.body.longURL;

@@ -22,7 +22,7 @@
             <%= shortURL %>
           </a></p>
         <!-- Add button to update URL for short link -->
-        <form method="POST" action="/urls/<%=shortURL%>/edit">
+        <form method="POST" action="/urls/<%=shortURL%>/edit?_method=PUT">
           <div>
             <input class="form-control" type="text" name="longURL" placeholder="http://" id="longURL"
               style="width: 300px; display:block; margin:0 auto">
