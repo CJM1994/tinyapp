@@ -19,5 +19,4 @@ const generateRandomString = function () {
   return shortURL;
 };
 
-module.exports = lookupIDByEmail;
-module.exports = generateRandomString;
+module.exports = lookupIDByEmail, generateRandomString;

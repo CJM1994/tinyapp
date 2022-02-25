@@ -83,17 +83,14 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
 
   const userID = lookupIDByEmail(req.body.email, users);
+  console.log(userID);
 
   if (!userID) {
-    res.status(403);
-    res.send('Username or email is invalid');
-    console.log('Email Invalid');
+    res.status(403).res.send('Username or email is invalid');
   }
 
   if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
-    res.status(403);
-    res.send('Username or email is invalid');
-    console.log('Password Invalid');
+    res.status(403).res.send('Username or email is invalid');
   }
 
   req.session.user_ID = userID;
