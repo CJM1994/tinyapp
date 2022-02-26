@@ -1,15 +1,21 @@
+// Express
 const express = require('express');
+const app = express();
+const PORT = 8080;
+
+// Other Dependencies
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const methodOverride = require('method-override');
-const app = express();
-const PORT = 8080;
 
-// HELPERS
+// Helpers
 const { lookupIDByEmail, generateRandomString, filterURLs } = require('./helpers');
 
+// Template
 app.set('view engine', 'ejs');
+
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(cookieSession({
@@ -18,7 +24,7 @@ app.use(cookieSession({
 }));
 
 const urlDatabase = {
-  // EXAMPLE URL
+  // Example URL
   // b6UTxQ: {
   //   longURL: "https://www.tsn.ca",
   //   userID: "userID"
@@ -26,7 +32,7 @@ const urlDatabase = {
 };
 
 const users = {
-  // EXAMPLE USER
+  // Example USER
   // 'userID': {
   //   id: 'userID',
   //   email: 'user@email.com',
