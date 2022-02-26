@@ -37,9 +37,7 @@ const users = {
 };
 
 app.get('/', (req, res) => {
-  if (req.session.user_ID) {
     res.redirect('/urls');
-  } else res.redirect('login');
 });
 
 app.get('/register', (req, res) => {
