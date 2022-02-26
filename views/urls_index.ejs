@@ -18,11 +18,13 @@
   <%- include('partials/_header') %>
 
     <main style="margin: 1em;">
+      <!-- Display if user not logged in -->
       <% if(user) { %>
         <h3>My URLs</h3>
         <% } else { %>
           <h3>Log-In or create an account to see your URLs here</h3>
           <% } %>
+          <!-- URL Table, filtered for ownership -->
             <table class="table">
               <thead>
                 <tr>

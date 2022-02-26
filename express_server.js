@@ -34,8 +34,9 @@ const users = {
   // }
 };
 
+/* ----- GET Routes ----- */
 app.get('/', (req, res) => {
-    res.redirect('/urls');
+  res.redirect('/urls');
 });
 
 app.get('/login', (req, res) => {
@@ -72,18 +73,21 @@ app.get('/urls/:shorturl', (req, res) => {
     if (urlDatabaseFiltered[req.params.shorturl]) {
       res.render('urls_view.ejs', templateVars);
     } else res.render('urls_view_logout', templateVars);
+  } else {
+    res.status(404).send('Page not found');
   }
-  else { res.status(404).send('Page not found') }
 
 });
 
 app.get('/u/:shorturl', (req, res) => {
   if (urlDatabase[req.params.shorturl]) {
     res.redirect(urlDatabase[req.params.shorturl].longURL);
+  } else {
+    res.status(404).send('Page not found');
   }
-  else { res.status(404).send('Page not found') };
 });
 
+/* ----- POST Routes ----- */
 app.post('/login', (req, res) => {
 
   const userID = lookupIDByEmail(req.body.email, users);
@@ -137,10 +141,13 @@ app.post('/urls', (req, res) => {
       longURL: req.body.longURL,
       userID: req.session.user_ID
     };
-    res.redirect(`/urls/${urlID}`)
-  } else { res.status(403).send('You must be logged in to create urls') };
+    res.redirect(`/urls/${urlID}`);
+  } else {
+    res.status(403).send('You must be logged in to create urls');
+  }
 });
 
+/* ----- PUT Routes ----- */
 app.put('/urls/:shorturl/edit', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   if (urlDatabaseFiltered[req.params.shorturl]) {
@@ -149,6 +156,7 @@ app.put('/urls/:shorturl/edit', (req, res) => {
   res.redirect('/urls');
 });
 
+/* ----- DELETE Routes ----- */
 app.delete('/urls/:shorturl/delete', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   if (urlDatabaseFiltered[req.params.shorturl]) {
@@ -157,6 +165,7 @@ app.delete('/urls/:shorturl/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+/* ----- SERVER ----- */
 app.listen(PORT, () => {
   console.log(`Server Listening on Port ${PORT}`);
 });

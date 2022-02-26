@@ -1,3 +1,4 @@
+// Lookup user ID by email - return false if no user found with email
 const lookupIDByEmail = function (email, userDB) {
   for (const id in userDB) {
     if (userDB[id].email === email) {
@@ -7,6 +8,7 @@ const lookupIDByEmail = function (email, userDB) {
   return false;
 };
 
+// Generate random string used for URL IDs and User IDs
 const generateRandomString = function () {
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const stringLength = 6;
@@ -19,6 +21,7 @@ const generateRandomString = function () {
   return shortURL;
 };
 
+// Returns URL object filtered by users session ID to determine ownership
 const filterURLs = function (urlDatabase, req) {
   const urlDatabaseFiltered = {};
   for (const url in urlDatabase) {
