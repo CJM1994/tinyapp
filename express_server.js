@@ -18,22 +18,20 @@ app.use(cookieSession({
 }));
 
 const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "userID"
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "userID"
-  }
+  // EXAMPLE URL
+  // b6UTxQ: {
+  //   longURL: "https://www.tsn.ca",
+  //   userID: "userID"
+  // }
 };
 
 const users = {
-  'userID': {
-    id: 'userID',
-    email: 'user@email.com',
-    password: '$2a$10$IIRVCgO5NS6s3mVXd0E1Ju6j4H.PK7bNFWiEBn1/zmaOB.L2aTHlS'
-  }
+  // EXAMPLE USER
+  // 'userID': {
+  //   id: 'userID',
+  //   email: 'user@email.com',
+  //   password: '$2a$10$IIRVCgO5NS6s3mVXd0E1Ju6j4H.PK7bNFWiEBn1/zmaOB.L2aTHlS'
+  // }
 };
 
 app.get('/', (req, res) => {
