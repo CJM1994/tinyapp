@@ -38,10 +38,71 @@ app.get('/', (req, res) => {
     res.redirect('/urls');
 });
 
+app.get('/login', (req, res) => {
+  if (req.session.user_ID) {
+    res.redirect('/urls');
+  } else res.render('login');
+});
+
 app.get('/register', (req, res) => {
   if (req.session.user_ID) {
     res.redirect('/urls');
   } else res.render('register');
+});
+
+app.get('/urls', (req, res) => {
+  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
+  const templateVars = { urls: urlDatabaseFiltered, user: users[req.session.user_ID] };
+  res.render('urls_index.ejs', templateVars);
+});
+
+app.get('/urls/new', (req, res) => {
+  if (!req.session.user_ID) {
+    res.redirect('/login');
+  }
+  const templateVars = { user: users[req.session.user_ID] };
+  res.render('urls_new', templateVars);
+});
+
+app.get('/urls/:shorturl', (req, res) => {
+
+  if (urlDatabase[req.params.shorturl]) {
+    const urlDatabaseFiltered = filterURLs(urlDatabase, req);
+    const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.session.user_ID] };
+    if (urlDatabaseFiltered[req.params.shorturl]) {
+      res.render('urls_view.ejs', templateVars);
+    } else res.render('urls_view_logout', templateVars);
+  }
+  else { res.status(404).send('Page not found') }
+
+});
+
+app.get('/u/:shorturl', (req, res) => {
+  if (urlDatabase[req.params.shorturl]) {
+    res.redirect(urlDatabase[req.params.shorturl].longURL);
+  }
+  else { res.status(404).send('Page not found') };
+});
+
+app.post('/login', (req, res) => {
+
+  const userID = lookupIDByEmail(req.body.email, users);
+
+  if (!userID) {
+    res.status(403).res.send('Username or email is invalid');
+  }
+
+  if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
+    res.status(403).res.send('Username or email is invalid');
+  }
+
+  req.session.user_ID = userID;
+  res.redirect('/urls');
+});
+
+app.post('/logout', (req, res) => {
+  req.session = null;
+  res.redirect('/urls');
 });
 
 app.post('/register', (req, res) => {
@@ -69,41 +130,6 @@ app.post('/register', (req, res) => {
   }
 });
 
-app.get('/login', (req, res) => {
-  if (req.session.user_ID) {
-    res.redirect('/urls');
-  } else res.render('login');
-});
-
-app.post('/login', (req, res) => {
-
-  const userID = lookupIDByEmail(req.body.email, users);
-
-  if (!userID) {
-    res.status(403).res.send('Username or email is invalid');
-  }
-
-  if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
-    res.status(403).res.send('Username or email is invalid');
-  }
-
-  req.session.user_ID = userID;
-  res.redirect('/urls');
-});
-
-app.post('/logout', (req, res) => {
-  req.session = null;
-  res.redirect('/urls');
-});
-
-app.get('/urls/new', (req, res) => {
-  if (!req.session.user_ID) {
-    res.redirect('/login');
-  }
-  const templateVars = { user: users[req.session.user_ID] };
-  res.render('urls_new', templateVars);
-});
-
 app.post('/urls', (req, res) => {
   if (req.session.user_ID) {
     const urlID = generateRandomString();
@@ -115,33 +141,6 @@ app.post('/urls', (req, res) => {
   } else { res.status(403).send('You must be logged in to create urls') };
 });
 
-app.get('/urls', (req, res) => {
-  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
-  const templateVars = { urls: urlDatabaseFiltered, user: users[req.session.user_ID] };
-  res.render('urls_index.ejs', templateVars);
-});
-
-app.get('/urls/:shorturl', (req, res) => {
-
-  if (urlDatabase[req.params.shorturl]) {
-    const urlDatabaseFiltered = filterURLs(urlDatabase, req);
-    const templateVars = { shortURL: req.params.shorturl, longURL: urlDatabase[req.params.shorturl].longURL, user: users[req.session.user_ID] };
-    if (urlDatabaseFiltered[req.params.shorturl]) {
-      res.render('urls_view.ejs', templateVars);
-    } else res.render('urls_view_logout', templateVars);
-  }
-  else { res.status(404).send('Page not found') }
-
-});
-
-app.delete('/urls/:shorturl/delete', (req, res) => {
-  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
-  if (urlDatabaseFiltered[req.params.shorturl]) {
-    delete urlDatabase[req.params.shorturl];
-  }
-  res.redirect('/urls');
-});
-
 app.put('/urls/:shorturl/edit', (req, res) => {
   const urlDatabaseFiltered = filterURLs(urlDatabase, req);
   if (urlDatabaseFiltered[req.params.shorturl]) {
@@ -150,11 +149,12 @@ app.put('/urls/:shorturl/edit', (req, res) => {
   res.redirect('/urls');
 });
 
-app.get('/u/:shorturl', (req, res) => {
-  if (urlDatabase[req.params.shorturl]) {
-    res.redirect(urlDatabase[req.params.shorturl].longURL);
+app.delete('/urls/:shorturl/delete', (req, res) => {
+  const urlDatabaseFiltered = filterURLs(urlDatabase, req);
+  if (urlDatabaseFiltered[req.params.shorturl]) {
+    delete urlDatabase[req.params.shorturl];
   }
-  else { res.status(404).send('Page not found') };
+  res.redirect('/urls');
 });
 
 app.listen(PORT, () => {
