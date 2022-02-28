@@ -93,12 +93,12 @@ app.get('/u/:shorturl', (req, res) => {
 app.post('/login', (req, res) => {
   const userID = lookupIDByEmail(req.body.email, users);
 
-  if (!userID) {
-    res.status(403).res.send('Username or email is invalid');
+  if (!userID || !req.body.password) {
+    res.status(403).send('Username or email is invalid');
   }
 
   if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
-    res.status(403).res.send('Username or email is invalid');
+    res.status(403).send('Username or email is invalid');
   }
 
   req.session.user_ID = userID;
@@ -117,7 +117,7 @@ app.post('/register', (req, res) => {
     res.status(400);
     res.send('email or password form is blank');
   }
-  if (lookupIDByEmail(req.body.email, users)) {
+  else if (lookupIDByEmail(req.body.email, users)) {
     res.status(400);
     res.send('email is in use');
   } else {
